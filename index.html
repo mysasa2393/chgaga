@@ -6,7 +6,7 @@
   <title>曼鯊鯊聖誕刮刮樂 🎄</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    /* ----- 聖誕視覺風格 ----- */
+    /* ----- 全局與背景 ----- */
     body { 
       text-align: center; font-family: "微軟正黑體", sans-serif; background: #FFF5EE; 
       margin: 0; overscroll-behavior: none; display: flex; flex-direction: column;
@@ -15,15 +15,15 @@
     
     h2 { color: #c62828; margin: 20px 0 10px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 
-    /* 公告區 */
+    /* 公告看板 */
     #noticeBoard {
       width: 85%; max-width: 400px; margin-bottom: 15px; padding: 12px 15px;
       background-color: #fff8e1; border: 2px dashed #ff8f00; border-radius: 12px;
       color: #5d4037; font-size: 14px; line-height: 1.6; display: none;
     }
 
-    /* 進度條 */
-    #loadingContainer { width: 80%; max-width: 300px; margin: 15px auto; display: none; z-index: 10; }
+    /* 狀態與進度條 */
+    #loadingContainer { width: 80%; max-width: 300px; margin: 15px auto; display: none; z-index: 100; }
     .progress-box { width: 100%; height: 18px; background-color: #e0e0e0; border-radius: 10px; border: 2px solid #2e7d32; overflow: hidden; }
     .progress-bar {
       width: 0%; height: 100%;
@@ -32,7 +32,7 @@
     }
     @keyframes candy-move { from { background-position: 0 0; } to { background-position: 33.9px 0; } }
 
-    /* 啟動區塊 (只需相機掃描) */
+    /* 啟動掃描區 */
     #inputSection { 
       padding: 30px 20px; background: white; width: 85%; max-width: 380px; 
       border-radius: 15px; border: 2px solid #2e7d32; 
@@ -49,31 +49,40 @@
     .wrapper { 
       position: relative; width: 300px; height: 150px; margin: 10px auto; 
       display: none; border: 6px solid #c62828; border-radius: 18px; 
-      box-shadow: 0 8px 20px rgba(198, 40, 40, 0.25); z-index: 5;
+      box-shadow: 0 8px 20px rgba(198, 40, 40, 0.25); z-index: 10;
     }
     #prize { font-size: 24px; font-weight: bold; color: #2e7d32; text-align: center; line-height: 150px; position: absolute; width: 100%; height: 100%; background: white; border-radius: 12px; }
-    #scratchCanvas { position: absolute; top: 0; left: 0; border-radius: 12px; z-index: 10; transition: opacity 0.8s ease; cursor: crosshair; }
-    #hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: #fff; font-weight: bold; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); animation: pulse 1.2s infinite; pointer-events: none; z-index: 15; }
+    #scratchCanvas { position: absolute; top: 0; left: 0; border-radius: 12px; z-index: 20; transition: opacity 0.8s ease; cursor: crosshair; }
+    #hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: #fff; font-weight: bold; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); animation: pulse 1.2s infinite; pointer-events: none; z-index: 30; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); } }
 
-    /* 個人紀錄清單 */
+    /* 操作按鈕區 (最關鍵的 z-index) */
+    #actionArea { margin-top: 15px; min-height: 80px; width: 100%; z-index: 500; position: relative; }
+    #rewardLink { 
+      display: none; margin: 10px auto; font-size: 17px; color: white; 
+      background-color: #2e7d32; padding: 16px 30px; text-decoration: none; 
+      border-radius: 50px; font-weight: bold; box-shadow: 0 5px 12px rgba(46,125,50,0.4); 
+      width: fit-content; pointer-events: auto;
+    }
+    #nextBtn { 
+      display: none; margin: 10px auto; padding: 14px 40px; font-size: 18px; 
+      background: #c62828; color: white; border: none; border-radius: 50px; 
+      font-weight: bold; cursor: pointer; box-shadow: 0 5px 12px rgba(198, 40, 40, 0.4); 
+      pointer-events: auto;
+    }
+    #revealBtn { margin: 10px auto; padding: 12px 24px; font-size: 15px; border: none; border-radius: 8px; background: #fbc02d; color: #333; font-weight: bold; cursor: pointer; display: none; z-index: 600; }
+    
+    .error-msg { color: #c62828; font-weight: bold; margin: 15px; }
+
+    /* 我的禮物盒 */
     #personalHistory { width: 85%; max-width: 400px; margin-top: 30px; text-align: left; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; box-sizing: border-box; }
-    #personalHistory h3 { margin: 0 0 10px 0; color: #c62828; font-size: 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FFF5EE; padding-bottom: 8px; }
+    #personalHistory h3 { margin: 0 0 10px 0; color: #c62828; font-size: 18px; display: flex; justify-content: space-between; border-bottom: 2px solid #FFF5EE; padding-bottom: 8px; }
     .history-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-    .history-item:last-child { border-bottom: none; }
     .history-prize { font-weight: bold; color: #2e7d32; font-size: 16px; }
     .history-link { background: #c62828; color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-    /* 操作按鈕 (領獎與下一張) */
-    #actionArea { margin-top: 10px; min-height: 60px; width: 100%; z-index: 20; position: relative; }
-    #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: #2e7d32; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(46,125,50,0.3); width: fit-content; }
-    #nextBtn { display: none; margin: 10px auto; padding: 12px 35px; font-size: 18px; background: #c62828; color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(198, 40, 40, 0.3); }
-    #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #fbc02d; color: #333; font-weight: bold; cursor: pointer; display: none; }
-    
-    .error-msg { color: #c62828; font-weight: bold; margin: 15px; z-index: 25; }
-
-    /* 相機 Overlay */
-    #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+    /* 相機視窗 */
+    #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
     #videoPreview { width: 85%; max-width: 400px; border: 3px solid #FFF; border-radius: 15px; }
     #closeCamBtn { margin-top: 30px; padding: 12px 40px; border-radius: 30px; border: 1px solid white; background: transparent; color: white; font-weight: bold; }
   </style>
@@ -85,14 +94,14 @@
   <div id="noticeBoard"></div>
 
   <div id="loadingContainer">
-    <div id="statusMessage" style="color:#c62828; font-weight:bold; margin-bottom:8px;">🎅 正在從煙囪傳送禮物...</div>
+    <div id="statusMessage" style="color:#c62828; font-weight:bold; margin-bottom:8px;">🎅 正在查詢聖誕名單...</div>
     <div class="progress-box"><div id="progressBar" class="progress-bar"></div></div>
   </div>
 
   <div id="errorArea" class="error-msg"></div>
 
   <div id="inputSection">
-    <div style="margin-bottom:15px; font-weight:bold; color:#2e7d32;">🎁 點擊下方按鈕領取聖誕禮物：</div>
+    <div style="margin-bottom:15px; font-weight:bold; color:#2e7d32;">🎁 點擊下方開啟相機掃描 QR Code：</div>
     <button id="scanBtn" onclick="startCamera()">📷 開啟相機掃描</button>
   </div>
 
@@ -118,14 +127,13 @@
   </div>
 
   <div id="cameraOverlay">
-    <h3 style="color:white; margin-bottom:20px;">請將 QR Code 放入框內</h3>
+    <h3 style="color:white; margin-bottom:20px;">請將 QR Code 對準鏡頭</h3>
     <video id="videoPreview" playsinline></video>
     <canvas id="canvasForScan" style="display:none;"></canvas>
     <button id="closeCamBtn" onclick="stopCamera()">取消掃描</button>
   </div>
 
   <script>
-    // ⚠️ 確保你的 GAS 網址已更新
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
     const canvas = document.getElementById("scratchCanvas");
@@ -154,14 +162,10 @@
         renderHistory();
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code');
-        if (code) {
-            startLottery(code); // 有序號，直接執行
-        } else {
-            showStartUI(); // 沒序號，顯示啟動區
-        }
+        if (code) startLottery(code);
+        else showStartUI();
     };
 
-    // --- 禮物盒管理 (已去重) ---
     function saveToHistory(name, url) {
         if (!name || name === "未中獎") return;
         let history = JSON.parse(localStorage.getItem('my_shark_prizes') || '[]');
@@ -169,7 +173,6 @@
         const now = new Date();
         const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
         history.unshift({ name, url, time: timeStr });
-        if(history.length > 50) history.pop();
         localStorage.setItem('my_shark_prizes', JSON.stringify(history));
         renderHistory();
     }
@@ -177,38 +180,27 @@
     function renderHistory() {
         const history = JSON.parse(localStorage.getItem('my_shark_prizes') || '[]');
         const list = document.getElementById("historyList");
-        if (history.length === 0) {
-            list.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">尚無獲獎紀錄</div>';
-            return;
-        }
+        if (history.length === 0) { list.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">尚無獲獎紀錄</div>'; return; }
         list.innerHTML = history.map(item => `
             <div class="history-item">
-                <div style="flex:1;">
-                    <div class="history-prize">${item.name}</div>
-                    <div class="history-time">${item.time}</div>
-                </div>
+                <div style="flex:1;"><div class="history-prize">${item.name}</div><div style="font-size:11px;color:#999;">${item.time}</div></div>
                 ${item.url ? `<a href="${item.url}" target="_blank" class="history-link">去領獎</a>` : ''}
             </div>
         `).join('');
     }
 
-    function clearHistory() { if(confirm("確定要清除您的得獎紀錄嗎？")) { localStorage.removeItem('my_shark_prizes'); renderHistory(); } }
+    function clearHistory() { if(confirm("確定要清除得獎紀錄嗎？")) { localStorage.removeItem('my_shark_prizes'); renderHistory(); } }
 
-    // --- 相機控制 ---
     function startCamera() {
-        isScanning = true;
-        document.getElementById("cameraOverlay").style.display = "flex";
+        isScanning = true; document.getElementById("cameraOverlay").style.display = "flex";
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
-            videoStream = stream;
-            const video = document.getElementById("videoPreview");
-            video.srcObject = stream; video.play();
-            requestAnimationFrame(tick);
-        }).catch(() => { alert("請開啟相機權限"); stopCamera(); });
+            videoStream = stream; document.getElementById("videoPreview").srcObject = stream;
+            document.getElementById("videoPreview").play(); requestAnimationFrame(tick);
+        }).catch(() => { alert("請開啟權限"); stopCamera(); });
     }
 
     function stopCamera() {
-        isScanning = false;
-        if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+        isScanning = false; if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
         document.getElementById("cameraOverlay").style.display = "none";
     }
 
@@ -218,24 +210,18 @@
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
             const sc = document.getElementById("canvasForScan");
             sc.height = video.videoHeight; sc.width = video.videoWidth;
-            const scCtx = sc.getContext("2d");
-            scCtx.drawImage(video, 0, 0, sc.width, sc.height);
+            const scCtx = sc.getContext("2d"); scCtx.drawImage(video, 0, 0, sc.width, sc.height);
             const qr = jsQR(scCtx.getImageData(0, 0, sc.width, sc.height).data, sc.width, sc.height);
             if (qr) {
                 stopCamera();
                 let finalCode = qr.data;
-                try {
-                    const url = new URL(qr.data);
-                    finalCode = url.searchParams.get("code") || qr.data;
-                } catch(e) {}
-                startLottery(finalCode);
-                return;
+                try { const url = new URL(qr.data); finalCode = url.searchParams.get("code") || qr.data; } catch(e) {}
+                startLottery(finalCode); return;
             }
         }
         requestAnimationFrame(tick);
     }
 
-    // --- 核心邏輯 ---
     function showStartUI() {
         inputSection.style.display = "block";
         fetch(`${GAS_API_URL}?action=getNotice`).then(res => res.json()).then(data => {
@@ -244,7 +230,6 @@
     }
 
     function startLottery(code) {
-        // 重要：開始查詢時，立刻隱藏啟動區與錯誤區
         inputSection.style.display = "none";
         errorArea.innerHTML = "";
         startLoading();
@@ -255,34 +240,21 @@
                 stopLoading();
                 if (data.status === "error") { 
                     errorArea.innerHTML = `❌ ${data.message}`; 
-                    inputSection.style.display = "block"; // 出錯才顯示回來
-                    return; 
+                    inputSection.style.display = "block"; return; 
                 }
                 currentPrizeName = data.prizeName;
                 prizeUrlData = data.prizeUrl || "";
-                
-                // 無論新舊，只要有資料就處理 UI
                 setupScratchCard(data);
-                
-                if (data.result === "played") {
-                    saveToHistory(data.prizeName, data.prizeUrl);
-                }
+                if (data.result === "played") saveToHistory(data.prizeName, data.prizeUrl);
             })
-            .catch(() => { 
-                stopLoading(); 
-                errorArea.innerText = "連線失敗"; 
-                inputSection.style.display = "block"; 
-            });
+            .catch(() => { stopLoading(); errorArea.innerText = "連線失敗"; inputSection.style.display = "block"; });
     }
 
     function setupScratchCard(data) {
-        // 二次保險：隱藏相機與啟動區
         inputSection.style.display = "none";
-        
         wrapper.style.display = "block";
         prizeDiv.innerText = data.prizeName;
         
-        // 設定連結文字
         let btnText = "👉 點我前往領取兌換卷";
         if (data.prizeName.includes("點數")) btnText = "👉 點我前往LINE領取點數";
         else if (data.prizeName.includes("折")) btnText = "👉 點我前往領取優惠卷";
@@ -290,56 +262,49 @@
 
         if (data.result === "played") {
              errorArea.innerHTML = "<small style='color:#f57f17'>⚠️ 此禮物已領過，以下為您的獎項：</small>";
-             canvas.style.display = "none"; hint.style.display = "none"; revealBtn.style.display = "none"; 
-             nextBtn.style.display = "inline-block"; // 顯示掃描下一張
-             if (prizeUrlData) {
-                rewardLink.href = prizeUrlData;
-                rewardLink.style.display = "inline-block"; // 顯示領獎連結
-             }
+             canvas.style.display = "none"; canvas.style.pointerEvents = "none"; // 關鍵：讓點擊穿透
+             hint.style.display = "none"; revealBtn.style.display = "none"; 
+             nextBtn.style.display = "inline-block";
+             if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
         } else {
              revealBtn.style.display = "inline-block";
-             resetCanvas(); 
-             initScratchEvents(); 
+             resetCanvas(); initScratchEvents(); 
         }
     }
 
     function revealPrize() {
         saveToHistory(currentPrizeName, prizeUrlData);
-        canvas.style.opacity = "0"; hint.style.display = "none";
+        canvas.style.opacity = "0";
+        canvas.style.pointerEvents = "none"; // 關鍵：讓點擊穿透
+        hint.style.display = "none";
         setTimeout(() => {
             canvas.style.display = "none"; 
             revealBtn.style.display = "none";
-            nextBtn.style.display = "inline-block"; // 刮開後顯示掃描下一張
-            if (prizeUrlData) {
-                rewardLink.href = prizeUrlData;
-                rewardLink.style.display = "inline-block"; // 顯示領獎連結
-            }
+            nextBtn.style.display = "inline-block";
+            if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
         }, 600);
     }
 
     function resetForNext() {
-        // 重置所有 UI 狀態
-        wrapper.style.display = "none"; 
-        rewardLink.style.display = "none"; 
-        nextBtn.style.display = "none"; 
-        revealBtn.style.display = "none"; 
-        errorArea.innerText = "";
+        wrapper.style.display = "none"; rewardLink.style.display = "none"; 
+        nextBtn.style.display = "none"; revealBtn.style.display = "none"; errorArea.innerText = "";
         window.history.replaceState({}, document.title, window.location.pathname);
-        showStartUI(); // 回到初始相機按鈕畫面
+        showStartUI();
     }
 
-    // --- 輔助函式 ---
     function startLoading() {
         loadingContainer.style.display = "block"; progressBar.style.width = "0%";
         let width = 0; progressInterval = setInterval(() => {
-            if (width < 85) width += Math.random() * 2.5; else width += Math.random() * 0.1;
-            if (width > 95) width = 95; progressBar.style.width = width + "%";
+            if (width < 85) width += Math.random() * 2.5; else width += Math.random() * 0.2;
+            progressBar.style.width = width + "%";
         }, 200);
     }
     function stopLoading() { clearInterval(progressInterval); progressBar.style.width = "100%"; setTimeout(() => { loadingContainer.style.display = "none"; }, 500); }
     
     function resetCanvas() {
-        firstScratch = false; canvas.style.display = "block"; canvas.style.opacity = "1"; hint.style.display = "block";
+        firstScratch = false; canvas.style.display = "block"; canvas.style.opacity = "1"; 
+        canvas.style.pointerEvents = "auto"; // 重置點擊接收
+        hint.style.display = "block";
         ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = "#FFD700"; ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#B8860B"; ctx.font = "bold 22px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText("🎄 刮開領聖誕禮物 🎄", canvas.width/2, canvas.height/2);
@@ -349,7 +314,8 @@
         e.preventDefault(); if (!isDrawing) return;
         if (!firstScratch) { hint.style.display = "none"; firstScratch = true; }
         const r = canvas.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - r.left; const y = (e.clientY || e.touches[0].clientY) - r.top;
+        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - r.left;
+        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - r.top;
         ctx.globalCompositeOperation = "destination-out"; ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fill();
         if (Math.random() > 0.1) return;
         const d = ctx.getImageData(0, 0, 300, 150).data; let c = 0; for (let i = 3; i < d.length; i += 16) if (d[i] === 0) c++;
