@@ -12,7 +12,8 @@
       font-family: "微軟正黑體", sans-serif; 
       background: #FFF5EE; 
       margin: 0; 
-      overscroll-behavior: none; 
+      /* 允許頁面滑動，解決小螢幕按不到按鈕的問題 */
+      overscroll-behavior-y: auto; 
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -51,10 +52,10 @@
     #scanBtn { 
       width: 100%; padding: 15px; background: #2e7d32; color: white; 
       border: none; border-radius: 10px; font-size: 18px; font-weight: bold; 
-      cursor: pointer; 
+      cursor: pointer; box-shadow: 0 4px 8px rgba(46,125,50,0.2); 
     }
 
-    /* 刮刮樂區域 - 修正基準點 */
+    /* 刮刮樂區域 */
     .wrapper { 
       position: relative; 
       width: 300px; height: 150px; 
@@ -63,7 +64,7 @@
       display: none; 
       border: 6px solid #c62828; border-radius: 18px;
       box-shadow: 0 8px 20px rgba(198, 40, 40, 0.25);
-      overflow: hidden; /* 確保內容不溢出邊框 */
+      z-index: 10; /* 確保刮刮樂層級正常 */
     }
     
     #prize {
@@ -75,28 +76,35 @@
 
     #scratchCanvas { 
       position: absolute; top: 0; left: 0; 
-      border-radius: 12px; z-index: 2; 
-      transition: opacity 0.8s ease; 
+      border-radius: 12px; z-index: 20; /* 畫布在文字之上 */
+      transition: opacity 0.5s ease; 
       cursor: crosshair; 
+      /* 重要：預設允許點擊，刮開後會被 JS 改為 none */
+      pointer-events: auto; 
     }
 
-    /* 提示動畫 - 修正置中歪掉 */
+    /* 提示動畫 */
     #hint {
-      position: absolute;
-      top: 50%; left: 0;
-      width: 100%; /* 撐開寬度才能完美居中 */
-      transform: translateY(-50%);
-      text-align: center;
-      font-size: 18px; color: #fff; font-weight: bold;
+      position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%);
+      text-align: center; font-size: 18px; color: #fff; font-weight: bold;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-      animation: pulse 1.2s infinite;
-      pointer-events: none;
-      z-index: 3;
+      animation: pulse 1.2s infinite; pointer-events: none; z-index: 30;
     }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); } 50% { opacity: 0.6; transform: translateY(-50%) scale(1.1); } }
 
+    /* 操作按鈕 - 關鍵修復：提高層級 */
+    #actionArea { 
+      margin-top: 15px; min-height: 60px; 
+      position: relative; 
+      z-index: 50; /* 確保按鈕在最上層 */
+    }
+    #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: #2e7d32; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); }
+    #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: #c62828; color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(198, 40, 40, 0.3); }
+    #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #fbc02d; color: #333; font-weight: bold; cursor: pointer; display: none; }
+    .error-msg { color: #c62828; font-weight: bold; margin: 15px; }
+
     /* 個人紀錄清單 */
-    #personalHistory { width: 85%; max-width: 400px; margin-top: 30px; text-align: left; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; box-sizing: border-box; }
+    #personalHistory { width: 85%; max-width: 400px; margin-top: 30px; text-align: left; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; box-sizing: border-box; z-index: 5; }
     #personalHistory h3 { margin: 0 0 10px 0; color: #c62828; font-size: 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FFF5EE; padding-bottom: 8px; }
     .history-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
     .history-item:last-child { border-bottom: none; }
@@ -104,15 +112,8 @@
     .history-time { font-size: 11px; color: #999; }
     .history-link { background: #c62828; color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
-    /* 操作按鈕 */
-    #actionArea { margin-top: 10px; min-height: 60px; z-index: 5; position: relative; }
-    #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: #2e7d32; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; }
-    #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: #c62828; color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; }
-    #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #fbc02d; color: #333; font-weight: bold; display: none; }
-    .error-msg { color: #c62828; font-weight: bold; margin: 15px; }
-
     /* 相機 Overlay */
-    #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+    #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
     #videoPreview { width: 85%; max-width: 400px; border: 3px solid #FFF; border-radius: 15px; }
     #closeCamBtn { margin-top: 30px; padding: 12px 40px; border-radius: 30px; border: 1px solid white; background: transparent; color: white; font-weight: bold; }
   </style>
@@ -164,6 +165,7 @@
   </div>
 
   <script>
+    // 請確認 GAS 網址是否正確
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
     const canvas = document.getElementById("scratchCanvas");
@@ -234,9 +236,8 @@
         cameraOverlay.style.display = "flex";
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
             videoStream = stream;
-            const video = document.getElementById("videoPreview");
-            video.srcObject = stream;
-            video.play();
+            document.getElementById("videoPreview").srcObject = stream;
+            document.getElementById("videoPreview").play();
             requestAnimationFrame(tick);
         }).catch(() => { alert("請開啟相機權限"); stopCamera(); });
     }
@@ -297,6 +298,7 @@
     }
 
     function setupScratchCard(data) {
+        inputSection.style.display = "none";
         wrapper.style.display = "block";
         prizeDiv.innerText = data.prizeName;
         
@@ -307,7 +309,10 @@
 
         if (data.result === "played") {
              errorArea.innerHTML = "<small style='color:#f57f17'>⚠️ 此禮物已領過：</small>";
-             canvas.style.display = "none"; hint.style.display = "none"; revealBtn.style.display = "none"; 
+             // 直接隱藏 Canvas，不需要等動畫
+             canvas.style.display = "none"; 
+             hint.style.display = "none"; 
+             revealBtn.style.display = "none"; 
              nextBtn.style.display = "inline-block";
              if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
         } else {
@@ -317,23 +322,30 @@
         }
     }
 
-    // --- 修正處：刮完立即讓 Canvas 不阻擋點擊 ---
     function revealPrize() {
         saveToHistory(currentPrizeName, prizeUrlData);
-        canvas.style.pointerEvents = "none"; // 讓點擊能穿透 Canvas 到按鈕
+        // 關鍵修復：立即讓 Canvas 不阻擋點擊
+        canvas.style.pointerEvents = "none";
         canvas.style.opacity = "0"; 
         hint.style.display = "none";
+        
+        // 縮短等待時間到 300ms 讓按鈕更快出現
         setTimeout(() => {
             canvas.style.display = "none"; 
             revealBtn.style.display = "none";
             nextBtn.style.display = "inline-block";
             if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
-        }, 600);
+        }, 300);
     }
 
     function resetForNext() {
-        wrapper.style.display = "none"; rewardLink.style.display = "none"; nextBtn.style.display = "none"; revealBtn.style.display = "none"; errorArea.innerText = "";
-        canvas.style.pointerEvents = "auto"; // 重置點擊狀態
+        wrapper.style.display = "none"; rewardLink.style.display = "none"; 
+        nextBtn.style.display = "none"; revealBtn.style.display = "none"; errorArea.innerText = "";
+        
+        // 重置 Canvas 狀態
+        canvas.style.pointerEvents = "auto";
+        canvas.style.opacity = "1";
+        
         window.history.replaceState({}, document.title, window.location.pathname);
         showStartUI();
     }
@@ -348,10 +360,14 @@
     function stopLoading() { clearInterval(progressInterval); progressBar.style.width = "100%"; setTimeout(() => loadingContainer.style.display = "none", 500); }
     
     function resetCanvas() {
-        firstScratch = false; canvas.style.display = "block"; canvas.style.opacity = "1"; hint.style.display = "block";
+        firstScratch = false; 
+        canvas.style.display = "block"; 
+        canvas.style.opacity = "1"; 
+        canvas.style.pointerEvents = "auto"; // 確保新的一張可以刮
+        hint.style.display = "block";
         ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = "#FFD700"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        // 移除了金色塗層上的文字，避免與 Hint 重疊
     }
+    
     function scratch(e) {
         e.preventDefault(); if (!isDrawing) return;
         if (!firstScratch) { hint.style.display = "none"; firstScratch = true; }
@@ -362,12 +378,19 @@
         const d = ctx.getImageData(0, 0, 300, 150).data; let c = 0; for (let i = 3; i < d.length; i += 16) if (d[i] === 0) c++;
         if (c > (300 * 150 / 16 * 0.7)) revealPrize();
     }
+
+    // 關鍵修復：事件監聽器改為只綁定 Canvas，不綁 Body
     function initScratchEvents() {
-        canvas.onmousedown = () => isDrawing = true; window.onmouseup = () => isDrawing = false; canvas.onmousemove = scratch;
-        canvas.ontouchstart = (e) => { isDrawing = true; e.preventDefault(); }; window.ontouchend = () => isDrawing = false; canvas.ontouchmove = scratch;
+        canvas.addEventListener("mousedown", () => isDrawing = true);
+        window.addEventListener("mouseup", () => isDrawing = false);
+        canvas.addEventListener("mousemove", scratch);
+
+        canvas.addEventListener("touchstart", (e) => { isDrawing = true; e.preventDefault(); }, { passive: false });
+        window.addEventListener("touchend", () => isDrawing = false);
+        canvas.addEventListener("touchmove", scratch, { passive: false });
+        
         revealBtn.onclick = revealPrize;
     }
-    document.body.addEventListener("touchmove", e => { if (e.target === canvas) e.preventDefault(); }, { passive: false });
   </script>
 </body>
 </html>
