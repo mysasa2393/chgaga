@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>曼鯊鯊聖誕刮刮樂 🎄</title>
   <style>
-    /* ----- 全局視覺風格 (聖誕色系) ----- */
+    /* ----- 全局視覺風格 ----- */
     body { 
       text-align: center; 
       font-family: "微軟正黑體", sans-serif; 
-      background: #FFF5EE; /* 溫馨貝殼白 */
+      background: #FFF5EE; 
       margin: 0; 
       overscroll-behavior: none; 
       display: flex;
@@ -20,11 +20,7 @@
       color: #333;
     }
     
-    h2 { 
-      color: #c62828; /* 聖誕紅 */
-      margin-bottom: 10px; 
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    }
+    h2 { color: #c62828; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 
     /* ----- 公告區塊 ----- */
     #noticeBoard {
@@ -40,94 +36,29 @@
       line-height: 1.6;
       display: none; 
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      position: relative;
     }
-    #noticeBoard::before {
-      content: "🔔 活動公告：";
-      font-weight: bold;
-      color: #d84315;
-    }
+    #noticeBoard::before { content: "🔔 活動公告："; font-weight: bold; color: #d84315; }
 
-    /* ----- 狀態與進度條區 ----- */
-    #loadingContainer {
-      width: 80%;
-      max-width: 300px;
-      margin: 15px auto;
-      display: none; 
-    }
-
-    #statusMessage { 
-      font-size: 1.1em; 
-      color: #c62828; 
-      margin-bottom: 10px; 
-      font-weight: bold; 
-    }
-
-    .progress-box {
-      width: 100%;
-      height: 18px;
-      background-color: #e0e0e0;
-      border-radius: 10px;
-      border: 2px solid #2e7d32; /* 聖誕綠 */
-      overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-    }
-
+    /* ----- 進度條區 ----- */
+    #loadingContainer { width: 80%; max-width: 300px; margin: 15px auto; display: none; }
+    #statusMessage { font-size: 1.1em; color: #c62828; margin-bottom: 10px; font-weight: bold; }
+    .progress-box { width: 100%; height: 18px; background-color: #e0e0e0; border-radius: 10px; border: 2px solid #2e7d32; overflow: hidden; }
     .progress-bar {
-      width: 0%;
-      height: 100%;
-      /* 紅白拐杖糖條紋動畫 */
-      background: repeating-linear-gradient(
-        45deg,
-        #c62828,
-        #c62828 12px,
-        #ffffff 12px,
-        #ffffff 24px
-      );
-      transition: width 0.4s ease;
+      width: 0%; height: 100%;
+      background: repeating-linear-gradient(45deg, #c62828, #c62828 12px, #ffffff 12px, #ffffff 24px);
+      transition: width 0.5s ease; /* 增加過渡時間讓移動更平滑 */
       animation: candy-move 1s linear infinite;
     }
+    @keyframes candy-move { from { background-position: 0 0; } to { background-position: 33.9px 0; } }
 
-    @keyframes candy-move {
-      from { background-position: 0 0; }
-      to { background-position: 33.9px 0; }
-    }
-
-    /* ----- 輸入框區域 ----- */
-    #inputSection {
-      padding: 25px;
-      background: white;
-      width: 85%;
-      max-width: 380px;
-      border-radius: 15px;
-      border: 2px solid #2e7d32; 
-      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.15);
-      display: none; 
-    }
-    input { 
-      padding: 12px; font-size: 16px; width: 65%; 
-      border: 1px solid #ccc; border-radius: 8px; 
-      outline: none;
-    }
-    #searchBtn { 
-      padding: 12px 20px; font-size: 16px; 
-      background: #c62828; 
-      color: white; 
-      border: none; border-radius: 8px; cursor: pointer; 
-      font-weight: bold; margin-left: 5px;
-    }
-
-    /* ----- 刮刮樂區域 ----- */
+    /* ----- 刮刮樂主體 ----- */
     .wrapper { 
       position: relative; 
-      width: 300px; 
-      height: 150px; 
+      width: 300px; height: 150px; 
       margin: 20px auto; 
-      user-select: none;
-      -webkit-user-select: none;
+      user-select: none; -webkit-user-select: none;
       display: none; 
-      border: 6px solid #c62828; 
-      border-radius: 18px;
+      border: 6px solid #c62828; border-radius: 18px;
       box-shadow: 0 8px 20px rgba(198, 40, 40, 0.25);
     }
     
@@ -135,80 +66,36 @@
       font-size: 24px; font-weight: bold; color: #2e7d32; 
       text-align: center; line-height: 150px;
       position: absolute; width: 100%; height: 100%;
-      background: white; 
-      border-radius: 12px;
-      visibility: visible;
+      background: white; border-radius: 12px;
     }
 
-    #scratchCanvas {
-      position: absolute; top: 0; left: 0;
-      border-radius: 12px;
-      cursor: crosshair;
-      z-index: 2;
-      transition: opacity 0.8s ease;
-    }
+    #scratchCanvas { position: absolute; top: 0; left: 0; border-radius: 12px; cursor: crosshair; z-index: 2; transition: opacity 0.8s ease; }
+    #hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; color: #fff; font-weight: bold; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); animation: pulse 1.2s infinite; pointer-events: none; z-index: 3; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); } }
 
-    #hint {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 18px; color: #fff; font-weight: bold;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
-      animation: pulse 1.2s infinite;
-      pointer-events: none;
-      z-index: 3;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
-    }
-
-    /* ----- 按鈕與連結區 ----- */
+    /* ----- 按鈕與連結 ----- */
     #actionArea { margin-top: 25px; min-height: 60px; }
-    
     #rewardLink {
-      display: none; 
-      margin-top: 15px; 
-      font-size: 16px; 
-      color: white;
-      background-color: #2e7d32; 
-      padding: 14px 28px;
-      text-decoration: none;
-      border-radius: 50px;
-      font-weight: bold;
-      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
-      transition: transform 0.2s;
+      display: none; margin-top: 15px; font-size: 16px; color: white;
+      background-color: #2e7d32; padding: 14px 28px; text-decoration: none;
+      border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
     }
-    #rewardLink:active { transform: scale(0.95); }
-
-    #revealBtn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background: #fbc02d; /* 金黃色 */
-      color: #333;
-      font-weight: bold;
-      cursor: pointer;
-      display: none;
-    }
-
+    #revealBtn { margin-top: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 8px; background: #fbc02d; color: #333; font-weight: bold; cursor: pointer; display: none; }
     .error-msg { color: #c62828; font-weight: bold; margin: 15px; }
+
+    #inputSection { padding: 25px; background: white; width: 85%; max-width: 380px; border-radius: 15px; border: 2px solid #2e7d32; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.15); display: none; }
+    input { padding: 12px; font-size: 16px; width: 65%; border: 1px solid #ccc; border-radius: 8px; }
+    #searchBtn { padding: 12px 20px; font-size: 16px; background: #c62828; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <h2>🎄 曼鯊鯊聖誕刮刮樂 🎅</h2>
-  
   <div id="noticeBoard"></div>
 
   <div id="loadingContainer">
     <div id="statusMessage">🎅 聖誕老公公正在查詢...</div>
-    <div class="progress-box">
-        <div id="progressBar" class="progress-bar"></div>
-    </div>
+    <div class="progress-box"><div id="progressBar" class="progress-bar"></div></div>
   </div>
 
   <div id="errorArea" class="error-msg"></div>
@@ -232,7 +119,6 @@
   </div>
 
   <script>
-    // 已更新為你的 GAS 網址
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
     const canvas = document.getElementById("scratchCanvas");
@@ -255,25 +141,14 @@
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code');
-
-        if (code) {
-            // 自動偵測序號，API 會一併回傳公告 (加速)
-            startLottery(code);
-        } else {
-            // 沒序號時，單獨顯示輸入框並預載公告
+        if (code) startLottery(code);
+        else {
             document.getElementById("inputSection").style.display = "block";
-            fetch(`${GAS_API_URL}?action=getNotice`)
-                .then(res => res.json())
-                .then(data => updateNotice(data.notice));
+            fetch(`${GAS_API_URL}?action=getNotice`).then(res => res.json()).then(data => updateNotice(data.notice));
         }
     };
 
-    function updateNotice(text) {
-        if (text) {
-            noticeBoard.innerText = text;
-            noticeBoard.style.display = "block";
-        }
-    }
+    function updateNotice(text) { if (text) { noticeBoard.innerText = text; noticeBoard.style.display = "block"; } }
 
     function manualStart() {
         const code = document.getElementById("serialInput").value.trim();
@@ -282,23 +157,32 @@
         startLottery(code);
     }
 
-    // 進度條控制
+    // --- 修改處：更平穩緩慢的進度條 ---
     function startLoading() {
-        loadingContainer.style.display = "block";
-        errorArea.innerText = "";
+        loadingContainer.style.display = "block"; 
+        errorArea.innerText = ""; 
         progressBar.style.width = "0%";
         let width = 0;
+
+        // 每 250 毫秒更新一次，速度更有節奏感
         progressInterval = setInterval(() => {
-            width += (width < 85) ? Math.random() * 8 : Math.random() * 0.5;
-            if (width > 95) width = 95;
+            if (width < 50) {
+                width += Math.random() * 3; // 初期：穩定
+            } else if (width < 80) {
+                width += Math.random() * 1.5; // 中期：放慢
+            } else if (width < 95) {
+                width += Math.random() * 0.3; // 後期：極慢爬行
+            }
+            
+            if (width > 95) width = 95; 
             progressBar.style.width = width + "%";
-        }, 150);
+        }, 250);
     }
 
-    function stopLoading() {
-        clearInterval(progressInterval);
-        progressBar.style.width = "100%";
-        setTimeout(() => { loadingContainer.style.display = "none"; }, 400);
+    function stopLoading() { 
+        clearInterval(progressInterval); 
+        progressBar.style.width = "100%"; 
+        setTimeout(() => { loadingContainer.style.display = "none"; }, 600); 
     }
 
     function startLottery(code) {
@@ -306,20 +190,19 @@
         fetch(`${GAS_API_URL}?code=${encodeURIComponent(code)}`)
             .then(res => res.json())
             .then(data => {
-                stopLoading();
-                updateNotice(data.notice); // 合併更新公告
-                
-                if (data.status === "error") {
-                    errorArea.innerHTML = `❌ ${data.message}`;
+                stopLoading(); 
+                updateNotice(data.notice);
+                if (data.status === "error") { 
+                    errorArea.innerHTML = `❌ ${data.message}`; 
                     document.getElementById("inputSection").style.display = "block"; 
-                    return;
+                    return; 
                 }
                 setupScratchCard(data);
             })
-            .catch(err => {
-                stopLoading();
-                errorArea.innerText = "連線失敗，請檢查網路";
-                document.getElementById("inputSection").style.display = "block";
+            .catch(err => { 
+                stopLoading(); 
+                errorArea.innerText = "連線失敗"; 
+                document.getElementById("inputSection").style.display = "block"; 
             });
     }
 
@@ -328,113 +211,70 @@
         prizeDiv.innerText = data.prizeName;
         prizeUrlData = data.prizeUrl || "";
 
-        // 動態按鈕文字邏輯
         let btnText = "👉 點我前往領取兌換卷";
         if (data.prizeName.includes("點數")) btnText = "👉 點我前往LINE領取點數";
         else if (data.prizeName.includes("折")) btnText = "👉 點我前往領取優惠卷";
         rewardLink.innerText = btnText;
 
         if (data.result === "played") {
-             // 已使用過，直接顯示
              errorArea.innerHTML = "<small style='color:#f57f17'>⚠️ 此禮物已領過，這是您的獎項：</small>";
-             canvas.style.display = "none"; 
-             hint.style.display = "none";   
-             revealBtn.style.display = "none"; 
-             if (prizeUrlData) {
-                rewardLink.href = prizeUrlData;
-                rewardLink.style.display = "inline-block";
-             }
+             canvas.style.display = "none"; hint.style.display = "none"; revealBtn.style.display = "none"; 
+             if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
         } else {
-             // 未使用，顯示刮刮樂
              revealBtn.style.display = "inline-block";
-             resetCanvas();
-             initScratchEvents(); 
+             resetCanvas(); initScratchEvents(); 
         }
     }
 
-    // --- Canvas 刮刮核心邏輯 ---
     function resetCanvas() {
-        canvas.style.display = "block";
-        canvas.style.opacity = "1";
-        hint.style.display = "block";
+        canvas.style.display = "block"; canvas.style.opacity = "1"; hint.style.display = "block";
         ctx.globalCompositeOperation = "source-over";
-        
-        // 金色塗層
-        ctx.fillStyle = "#FFD700"; 
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // 加上裝飾文字
-        ctx.fillStyle = "#B8860B"; 
-        ctx.font = "bold 24px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#FFD700"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#B8860B"; ctx.font = "bold 24px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
         ctx.fillText("🎄 Merry X'mas 🎄", canvas.width/2, canvas.height/2);
     }
 
     function scratch(e) {
         e.preventDefault();
         if (!isDrawing) return;
-
-        if (!firstScratch) {
-            hint.style.display = "none"; 
-            firstScratch = true;
-        }
-
+        if (!firstScratch) { hint.style.display = "none"; firstScratch = true; }
         const rect = canvas.getBoundingClientRect();
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
         const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-        const x = clientX - rect.left;
-        const y = clientY - rect.top;
-
         ctx.globalCompositeOperation = "destination-out";
         ctx.beginPath();
-        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.arc(clientX - rect.left, clientY - rect.top, 22, 0, Math.PI * 2);
         ctx.fill();
-        
         checkPercent();
     }
 
     function checkPercent() {
-        if (Math.random() > 0.1) return; // 效能優化
+        if (Math.random() > 0.1) return;
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let cleared = 0;
-        for (let i = 3; i < imageData.data.length; i += 16) { 
-            if (imageData.data[i] === 0) cleared++;
-        }
-        if (cleared > (canvas.width * canvas.height / 16 * 0.6)) { 
+        for (let i = 3; i < imageData.data.length; i += 16) { if (imageData.data[i] === 0) cleared++; }
+        const totalSamples = (canvas.width * canvas.height) / 4;
+        const percent = (cleared / totalSamples) * 100;
+        if (percent > 70 && canvas.style.opacity !== "0") { 
             revealPrize();
         }
     }
 
     function revealPrize() {
-        canvas.style.opacity = "0";
-        hint.style.display = "none";
+        canvas.style.opacity = "0"; hint.style.display = "none";
         setTimeout(() => {
-            canvas.style.display = "none";
-            revealBtn.style.display = "none";
-            if (prizeUrlData) {
-                rewardLink.href = prizeUrlData;
-                rewardLink.style.display = "inline-block";
-            }
+            canvas.style.display = "none"; revealBtn.style.display = "none";
+            if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
         }, 600);
     }
 
     function initScratchEvents() {
-        canvas.onmousedown = () => isDrawing = true;
-        window.onmouseup = () => isDrawing = false;
-        canvas.onmousemove = scratch;
-
-        canvas.ontouchstart = (e) => { isDrawing = true; e.preventDefault(); };
-        window.ontouchend = () => isDrawing = false;
-        canvas.ontouchmove = scratch;
-        
+        canvas.onmousedown = () => isDrawing = true; window.onmouseup = () => isDrawing = false; canvas.onmousemove = scratch;
+        canvas.ontouchstart = (e) => { isDrawing = true; e.preventDefault(); }; window.ontouchend = () => isDrawing = false; canvas.ontouchmove = scratch;
         revealBtn.onclick = revealPrize;
     }
 
-    // 防止頁面在刮動時滑動
-    document.body.addEventListener("touchmove", function(e) {
-        if (e.target === canvas) e.preventDefault();
-    }, { passive: false });
+    document.body.addEventListener("touchmove", function(e) { if (e.target === canvas) e.preventDefault(); }, { passive: false });
   </script>
 </body>
 </html>
