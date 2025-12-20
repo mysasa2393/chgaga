@@ -7,12 +7,12 @@
   <style>
     /* ----- 溫馨聖誕主題 ----- */
     :root {
-      --bg-color: #FFF5EE; /* 貝殼白 */
+      --bg-color: #FFF5EE; 
       --card-bg: #ffffff;
       --primary-red: #d32f2f;
       --primary-green: #2e7d32;
       --gold: #fbc02d;
-      --text-color: #5d4037; /* 深褐色，比純黑溫暖 */
+      --text-color: #5d4037; 
     }
 
     body {
@@ -38,24 +38,16 @@
       z-index: 10;
     }
     h1::after {
-      content: "🎁";
-      font-size: 0.6em;
-      position: absolute;
-      top: -10px;
-      right: -50px;
-      animation: swing 2s infinite ease-in-out;
+      content: "🎁"; font-size: 0.6em; position: absolute;
+      top: -10px; right: -50px; animation: swing 2s infinite ease-in-out;
     }
 
     /* 儀表板佈局 */
     .dashboard {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 25px;
-      width: 100%;
-      max-width: 1200px;
-      justify-content: center;
-      align-items: flex-start;
-      z-index: 10; /* 確保在雪花之上 */
+      display: flex; flex-wrap: wrap; gap: 25px;
+      width: 100%; max-width: 1200px;
+      justify-content: center; align-items: flex-start;
+      z-index: 10; 
     }
 
     .left-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 25px; }
@@ -66,32 +58,23 @@
       background: var(--card-bg);
       border-radius: 20px;
       padding: 25px;
-      box-shadow: 0 10px 30px rgba(166, 124, 82, 0.15); /* 柔和暖色陰影 */
+      box-shadow: 0 10px 30px rgba(166, 124, 82, 0.15);
       border: 2px solid #fff;
       position: relative;
       overflow: hidden;
     }
-    /* 卡片頂部的裝飾線條 */
     .card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 6px;
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
       background: repeating-linear-gradient(45deg, var(--primary-red), var(--primary-red) 10px, #fff 10px, #fff 20px);
     }
 
     /* 總數卡片 */
     .stat-title { font-size: 20px; color: #8d6e63; margin-bottom: 5px; font-weight: bold; }
     .stat-number {
-      font-size: 90px;
-      font-weight: 900;
-      color: var(--primary-green);
-      margin: 10px 0;
-      text-shadow: 2px 2px 0px #e8f5e9;
-      font-family: 'Arial Black', sans-serif;
+      font-size: 90px; font-weight: 900; color: var(--primary-green);
+      margin: 10px 0; text-shadow: 2px 2px 0px #e8f5e9; font-family: 'Arial Black', sans-serif;
     }
     
-    /* 狀態燈 */
     .live-status {
       display: inline-flex; align-items: center;
       background: #e8f5e9; color: var(--primary-green);
@@ -99,8 +82,7 @@
     }
     .live-dot {
       width: 10px; height: 10px; background: var(--primary-green);
-      border-radius: 50%; margin-right: 8px;
-      animation: pulse 1.5s infinite;
+      border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite;
     }
 
     /* 分類統計 */
@@ -108,12 +90,9 @@
       display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px;
     }
     .prize-mini-card {
-      background: #fff8e1; /* 淡黃色 */
-      padding: 15px; border-radius: 12px; text-align: center;
+      background: #fff8e1; padding: 15px; border-radius: 12px; text-align: center;
       border: 1px solid #ffe0b2;
-      transition: transform 0.2s;
     }
-    .prize-mini-card:hover { transform: translateY(-3px); }
     .prize-name { font-size: 14px; color: #795548; margin-bottom: 5px; }
     .prize-count { font-size: 24px; color: var(--primary-red); font-weight: bold; }
 
@@ -126,10 +105,8 @@
     }
     .log-list {
       list-style: none; padding: 0; margin: 0;
-      overflow-y: auto; flex: 1;
-      padding-right: 5px;
+      overflow-y: auto; flex: 1; padding-right: 5px;
     }
-    /* 捲軸美化 */
     .log-list::-webkit-scrollbar { width: 6px; }
     .log-list::-webkit-scrollbar-thumb { background: #ffccbc; border-radius: 3px; }
 
@@ -139,7 +116,8 @@
       background: #fff; border-radius: 10px;
       border-left: 5px solid var(--gold);
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      animation: slideIn 0.5s ease;
+      /* 移除動畫，解決閃爍問題 */
+      /* animation: slideIn 0.5s ease; */ 
     }
     .log-time { color: #999; font-size: 13px; font-family: monospace; }
     .log-user { color: #333; font-weight: bold; flex: 1; margin-left: 15px; font-size: 16px; }
@@ -157,7 +135,6 @@
 
     @keyframes fall { to { transform: translateY(100vh) rotate(360deg); } }
     @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes swing { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
 
     /* RWD */
@@ -207,10 +184,11 @@
     const countDisplay = document.getElementById("countDisplay");
     const logList = document.getElementById("logList");
     const breakdownGrid = document.getElementById("breakdownGrid");
+    
+    // 儲存上一次的列表 HTML，用來比對是否需要更新
+    let lastLogHtml = "";
 
-    // 啟動雪花特效
     createSnow();
-    // 啟動資料抓取
     fetchData();
     setInterval(fetchData, 5000);
 
@@ -224,18 +202,18 @@
     }
 
     function updateUI(data) {
-      // 1. 更新總數
+      // 1. 更新總數 (只有數字變了才跳動)
       const currentCount = parseInt(countDisplay.innerText);
       if (currentCount !== data.todayCount) {
-        countDisplay.style.transform = "scale(1.2)";
+        countDisplay.innerText = data.todayCount;
+        countDisplay.style.transform = "scale(1.1)";
         setTimeout(() => countDisplay.style.transform = "scale(1)", 200);
       }
-      countDisplay.innerText = data.todayCount;
 
       // 2. 更新分類
       updateBreakdown(data.prizeCounts);
 
-      // 3. 更新列表
+      // 3. 更新列表 (防閃爍核心邏輯)
       updateLogList(data.recentLogs);
     }
 
@@ -262,6 +240,7 @@
         logList.innerHTML = '<li style="text-align:center; padding:40px; color:#aaa;">今日尚無紀錄</li>';
         return;
       }
+      
       let html = "";
       logs.forEach(log => {
         html += `
@@ -272,10 +251,15 @@
           </li>
         `;
       });
-      logList.innerHTML = html;
+
+      // 關鍵修改：只有當內容真的不一樣時，才寫入 DOM
+      // 這能防止瀏覽器重新渲染造成的閃爍
+      if (html !== lastLogHtml) {
+        logList.innerHTML = html;
+        lastLogHtml = html; // 更新快取
+      }
     }
 
-    // --- 雪花特效腳本 ---
     function createSnow() {
       const symbols = ['❄', '❅', '❆', '•'];
       setInterval(() => {
@@ -283,17 +267,12 @@
         snowflake.classList.add('snowflake');
         snowflake.innerText = symbols[Math.floor(Math.random() * symbols.length)];
         snowflake.style.left = Math.random() * 100 + 'vw';
-        snowflake.style.animationDuration = Math.random() * 3 + 5 + 's'; // 5~8秒
+        snowflake.style.animationDuration = Math.random() * 3 + 5 + 's'; 
         snowflake.style.opacity = Math.random();
         snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
-        
         document.body.appendChild(snowflake);
-        
-        // 10秒後移除，避免記憶體洩漏
-        setTimeout(() => {
-          snowflake.remove();
-        }, 10000);
-      }, 300); // 每300ms產生一片
+        setTimeout(() => { snowflake.remove(); }, 10000);
+      }, 300);
     }
   </script>
 
