@@ -3,160 +3,198 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎄 聖誕抽獎戰情室</title>
+  <title>🎅 聖誕歡樂開獎看板 🎄</title>
   <style>
+    /* ----- 溫馨聖誕主題 ----- */
+    :root {
+      --bg-color: #FFF5EE; /* 貝殼白 */
+      --card-bg: #ffffff;
+      --primary-red: #d32f2f;
+      --primary-green: #2e7d32;
+      --gold: #fbc02d;
+      --text-color: #5d4037; /* 深褐色，比純黑溫暖 */
+    }
+
     body {
-      background-color: #1a1a1a;
-      color: #fff;
-      font-family: "微軟正黑體", sans-serif;
+      background: linear-gradient(180deg, #FFF5EE 0%, #ffebee 100%);
+      color: var(--text-color);
+      font-family: "微軟正黑體", "Segoe UI", sans-serif;
       margin: 0;
       padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
+    /* 標題裝飾 */
     h1 {
-      color: #c62828;
-      text-shadow: 0 0 10px rgba(198, 40, 40, 0.5);
-      margin-bottom: 20px;
+      color: var(--primary-red);
+      font-size: 3em;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 0px #fff, 4px 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 10;
+    }
+    h1::after {
+      content: "🎁";
+      font-size: 0.6em;
+      position: absolute;
+      top: -10px;
+      right: -50px;
+      animation: swing 2s infinite ease-in-out;
     }
 
-    /* 儀表板容器 */
+    /* 儀表板佈局 */
     .dashboard {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 25px;
       width: 100%;
       max-width: 1200px;
       justify-content: center;
       align-items: flex-start;
+      z-index: 10; /* 確保在雪花之上 */
     }
 
-    /* 左側欄位：總數 + 分類 */
-    .left-panel {
-      flex: 1;
-      min-width: 300px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .left-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 25px; }
+    .right-panel { flex: 1.5; min-width: 350px; display: flex; flex-direction: column; height: 650px; }
+
+    /* 通用卡片樣式 */
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(166, 124, 82, 0.15); /* 柔和暖色陰影 */
+      border: 2px solid #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    /* 卡片頂部的裝飾線條 */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(45deg, var(--primary-red), var(--primary-red) 10px, #fff 10px, #fff 20px);
     }
 
     /* 總數卡片 */
-    .stat-card {
-      background: #2d2d2d;
-      border-radius: 15px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      border: 1px solid #444;
-    }
-
-    .stat-title { font-size: 24px; color: #aaa; margin-bottom: 10px; }
+    .stat-title { font-size: 20px; color: #8d6e63; margin-bottom: 5px; font-weight: bold; }
     .stat-number {
-      font-size: 80px; font-weight: bold; color: #2e7d32;
-      text-shadow: 0 0 20px rgba(46, 125, 50, 0.4); margin: 0;
+      font-size: 90px;
+      font-weight: 900;
+      color: var(--primary-green);
+      margin: 10px 0;
+      text-shadow: 2px 2px 0px #e8f5e9;
+      font-family: 'Arial Black', sans-serif;
     }
     
-    /* 分類統計區 */
-    .breakdown-panel {
-      background: #2d2d2d;
-      border-radius: 15px;
-      padding: 20px;
-      border: 1px solid #444;
+    /* 狀態燈 */
+    .live-status {
+      display: inline-flex; align-items: center;
+      background: #e8f5e9; color: var(--primary-green);
+      padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;
     }
-    .panel-header {
-      border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 10px;
-      font-size: 18px; font-weight: bold; color: #fbc02d;
+    .live-dot {
+      width: 10px; height: 10px; background: var(--primary-green);
+      border-radius: 50%; margin-right: 8px;
+      animation: pulse 1.5s infinite;
     }
-    
+
+    /* 分類統計 */
     .breakdown-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px;
     }
-
     .prize-mini-card {
-      background: #3d3d3d;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      border: 1px solid #555;
+      background: #fff8e1; /* 淡黃色 */
+      padding: 15px; border-radius: 12px; text-align: center;
+      border: 1px solid #ffe0b2;
+      transition: transform 0.2s;
     }
-    .prize-name { font-size: 14px; color: #ddd; margin-bottom: 5px; }
-    .prize-count { font-size: 24px; color: #ffab91; font-weight: bold; }
+    .prize-mini-card:hover { transform: translateY(-3px); }
+    .prize-name { font-size: 14px; color: #795548; margin-bottom: 5px; }
+    .prize-count { font-size: 24px; color: var(--primary-red); font-weight: bold; }
 
-    /* 右側：即時流水帳 */
-    .log-panel {
-      flex: 1.5;
-      min-width: 350px;
-      background: #2d2d2d;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      border: 1px solid #444;
-      height: 600px; /* 固定高度 */
-      display: flex;
-      flex-direction: column;
+    /* 右側列表 */
+    .panel-header {
+      font-size: 22px; font-weight: bold; color: var(--primary-red);
+      margin-bottom: 15px; padding-bottom: 10px;
+      border-bottom: 2px dashed #ffcdd2;
+      display: flex; align-items: center; gap: 10px;
     }
-
     .log-list {
       list-style: none; padding: 0; margin: 0;
       overflow-y: auto; flex: 1;
+      padding-right: 5px;
     }
+    /* 捲軸美化 */
+    .log-list::-webkit-scrollbar { width: 6px; }
+    .log-list::-webkit-scrollbar-thumb { background: #ffccbc; border-radius: 3px; }
 
     .log-item {
-      display: flex; justify-content: space-between;
-      padding: 12px 10px; border-bottom: 1px solid #3d3d3d;
-      animation: fadeIn 0.5s ease;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px; margin-bottom: 10px;
+      background: #fff; border-radius: 10px;
+      border-left: 5px solid var(--gold);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      animation: slideIn 0.5s ease;
     }
-    .log-time { color: #888; font-size: 14px; width: 80px; }
-    .log-user { color: #fff; font-weight: bold; flex: 1; text-align: left; padding-left: 10px; }
-    .log-prize { color: #ffab91; font-weight: bold; text-align: right; }
-
-    .live-indicator {
-      display: inline-block; width: 10px; height: 10px;
-      background-color: #f00; border-radius: 50%;
-      margin-right: 8px; animation: blink 1.5s infinite;
+    .log-time { color: #999; font-size: 13px; font-family: monospace; }
+    .log-user { color: #333; font-weight: bold; flex: 1; margin-left: 15px; font-size: 16px; }
+    .log-prize { 
+      color: var(--primary-red); font-weight: bold; 
+      background: #ffebee; padding: 5px 10px; border-radius: 15px; font-size: 14px;
     }
 
-    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    /* 雪花特效 */
+    .snowflake {
+      position: fixed; top: -10px; z-index: 1;
+      color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.1);
+      animation: fall linear infinite; pointer-events: none;
+    }
+
+    @keyframes fall { to { transform: translateY(100vh) rotate(360deg); } }
+    @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes swing { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
 
     /* RWD */
     @media (max-width: 768px) {
+      h1 { font-size: 2em; }
       .stat-number { font-size: 60px; }
-      .log-panel { height: 400px; }
+      .right-panel { height: 500px; }
     }
   </style>
 </head>
 <body>
 
-  <h1>🎅 聖誕抽獎戰情室 🎄</h1>
+  <h1>🎅 聖誕歡樂開獎看板 🎄</h1>
 
   <div class="dashboard">
     
     <div class="left-panel">
-      <div class="stat-card">
-        <div class="stat-title">📅 今日總抽出數</div>
+      <div class="card" style="text-align: center;">
+        <div class="stat-title">📅 今日已送出禮物</div>
         <div class="stat-number" id="countDisplay">0</div>
-        <div style="margin-top:10px; color:#666; font-size:14px;">
-          <span class="live-indicator"></span>即時監控中
+        <div class="live-status">
+          <span class="live-dot"></span> 即時連線中
         </div>
       </div>
 
-      <div class="breakdown-panel">
-        <div class="panel-header">📊 今日獎項分佈</div>
+      <div class="card">
+        <div class="panel-header">📊 禮物派發狀況</div>
         <div class="breakdown-grid" id="breakdownGrid">
-          <div style="color:#666; font-size:14px;">載入中...</div>
+          <div style="color:#999; font-size:14px; grid-column:1/-1; text-align:center;">載入中...</div>
         </div>
       </div>
     </div>
 
-    <div class="log-panel">
-      <div class="panel-header">📝 最新中獎動態 (Real-time)</div>
+    <div class="right-panel card">
+      <div class="panel-header">📝 最新幸運兒名單</div>
       <ul class="log-list" id="logList">
-        <li style="text-align:center; padding:20px; color:#666;">等待資料中...</li>
+        <li style="text-align:center; padding:20px; color:#999;">等待聖誕老人派送中...</li>
       </ul>
     </div>
 
@@ -170,9 +208,10 @@
     const logList = document.getElementById("logList");
     const breakdownGrid = document.getElementById("breakdownGrid");
 
-    // 啟動時執行
+    // 啟動雪花特效
+    createSnow();
+    // 啟動資料抓取
     fetchData();
-    // 每 5 秒自動更新一次
     setInterval(fetchData, 5000);
 
     function fetchData() {
@@ -188,12 +227,12 @@
       // 1. 更新總數
       const currentCount = parseInt(countDisplay.innerText);
       if (currentCount !== data.todayCount) {
-        countDisplay.style.color = "#4caf50";
-        setTimeout(() => countDisplay.style.color = "#2e7d32", 300);
+        countDisplay.style.transform = "scale(1.2)";
+        setTimeout(() => countDisplay.style.transform = "scale(1)", 200);
       }
       countDisplay.innerText = data.todayCount;
 
-      // 2. 更新分類統計 (新功能)
+      // 2. 更新分類
       updateBreakdown(data.prizeCounts);
 
       // 3. 更新列表
@@ -202,13 +241,10 @@
 
     function updateBreakdown(counts) {
       if (!counts || Object.keys(counts).length === 0) {
-        breakdownGrid.innerHTML = '<div style="color:#666; font-size:14px; grid-column:1/-1; text-align:center;">今日尚無獎項</div>';
+        breakdownGrid.innerHTML = '<div style="color:#aaa; font-size:14px; grid-column:1/-1; text-align:center;">今日尚無禮物送出</div>';
         return;
       }
-
-      // 將物件轉為陣列並排序 (數量多的排前面)
       const sortedPrizes = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-
       let html = "";
       sortedPrizes.forEach(([name, count]) => {
         html += `
@@ -223,21 +259,41 @@
 
     function updateLogList(logs) {
       if (logs.length === 0) {
-        logList.innerHTML = '<li style="text-align:center; padding:20px; color:#666;">今日尚無紀錄</li>';
+        logList.innerHTML = '<li style="text-align:center; padding:40px; color:#aaa;">今日尚無紀錄</li>';
         return;
       }
-
       let html = "";
       logs.forEach(log => {
         html += `
           <li class="log-item">
             <span class="log-time">${log.time}</span>
             <span class="log-user">${log.code}</span>
-            <span class="log-prize">🎉 ${log.prize}</span>
+            <span class="log-prize">🎁 ${log.prize}</span>
           </li>
         `;
       });
       logList.innerHTML = html;
+    }
+
+    // --- 雪花特效腳本 ---
+    function createSnow() {
+      const symbols = ['❄', '❅', '❆', '•'];
+      setInterval(() => {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        snowflake.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        snowflake.style.animationDuration = Math.random() * 3 + 5 + 's'; // 5~8秒
+        snowflake.style.opacity = Math.random();
+        snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+        
+        document.body.appendChild(snowflake);
+        
+        // 10秒後移除，避免記憶體洩漏
+        setTimeout(() => {
+          snowflake.remove();
+        }, 10000);
+      }, 300); // 每300ms產生一片
     }
   </script>
 
