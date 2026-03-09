@@ -309,6 +309,10 @@
             .then(res => res.json())
             .then(data => {
                 stopLoading();
+              if (data.notice) {
+                noticeBoard.innerText = data.notice;
+                noticeBoard.style.display = "block";
+            }
                 if (data.status === "error") { 
                     errorArea.innerHTML = `❌ ${data.message}`; 
                     inputSection.style.display = "block"; 
