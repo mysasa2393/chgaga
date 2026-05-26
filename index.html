@@ -3,21 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>幸運刮刮樂</title>
+  <title>🎓 畢業季專屬刮刮樂</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    /* ----- 通用視覺風格 (橘金配色) ----- */
+    /* ----- 畢業季視覺風格 (海軍藍 + 榮耀金) ----- */
     :root {
-      --main-color: #ff9800;       /* 主色調：橘色 */
-      --main-dark: #f57c00;        /* 深橘色 */
-      --accent-color: #d84315;     /* 強調色：紅橘 */
-      --success-color: #2e7d32;    /* 成功綠 */
-      --bg-color: #fff8e1;         /* 背景色：淡米黃 */
-      --scratch-color: #FFD700;    /* 刮漆顏色：金色 */
+      --main-color: #1e3a8a;       /* 主色調：學院海軍藍 */
+      --main-dark: #172554;        /* 深藍色 */
+      --accent-color: #d97706;     /* 強調色：榮耀金/橘黃 */
+      --success-color: #059669;    /* 成功綠 */
+      --bg-color: #f0f9ff;         /* 背景色：清新天空藍 */
+      --scratch-color: #fbbf24;    /* 刮漆顏色：金色 */
     }
 
     body { 
-      text-align: center; font-family: "微軟正黑體", sans-serif; background: var(--bg-color); margin: 0; 
+      text-align: center; font-family: "微軟正黑體", sans-serif; 
+      /* 加入天空藍的漸層背景，增添青春感 */
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); 
+      margin: 0; 
       overscroll-behavior-y: auto; 
       display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
       min-height: 100vh; color: #333; padding-bottom: 50px;
@@ -25,17 +28,19 @@
     
     /* 標題樣式調整 */
     h2 { 
-      color: var(--accent-color); 
-      margin: 20px 0 10px 0; 
-      font-size: 24px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1); 
+      color: var(--main-color); 
+      margin: 25px 0 10px 0; 
+      font-size: 26px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1); 
+      font-weight: 800;
     }
 
     /* 公告區 */
     #noticeBoard {
       width: 85%; max-width: 400px; margin-bottom: 15px; padding: 12px 15px;
-      background-color: #ffffff; border: 2px dashed var(--main-dark); border-radius: 12px;
-      color: #5d4037; font-size: 14px; line-height: 1.6; display: none;
+      background-color: #ffffff; border: 2px dashed var(--main-color); border-radius: 12px;
+      color: #1e40af; font-size: 14px; line-height: 1.6; display: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
 
     /* 進度條 */
@@ -43,8 +48,8 @@
     .progress-box { width: 100%; height: 18px; background-color: #e0e0e0; border-radius: 10px; border: 2px solid var(--main-dark); overflow: hidden; }
     .progress-bar {
       width: 0%; height: 100%;
-      /* 改為通用斜紋 */
-      background: repeating-linear-gradient(45deg, var(--main-color), var(--main-color) 10px, #ffb74d 10px, #ffb74d 20px);
+      /* 藍色斜紋 */
+      background: repeating-linear-gradient(45deg, var(--main-color), var(--main-color) 10px, #3b82f6 10px, #3b82f6 20px);
       transition: width 0.5s ease; animation: stripe-move 1s linear infinite;
     }
     @keyframes stripe-move { from { background-position: 0 0; } to { background-position: 28px 0; } }
@@ -53,14 +58,16 @@
     #inputSection { 
       padding: 30px 20px; background: white; width: 85%; max-width: 380px; 
       border-radius: 15px; border: 2px solid var(--main-color); 
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+      box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15); 
       display: none; box-sizing: border-box; 
     }
     #scanBtn { 
       width: 100%; padding: 15px; background: var(--main-color); color: white; 
       border: none; border-radius: 10px; font-size: 18px; font-weight: bold; 
       cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+      transition: background 0.3s;
     }
+    #scanBtn:hover { background: var(--main-dark); }
     #scanBtn:active { transform: translateY(2px); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
     /* 刮刮樂區域 */
@@ -77,7 +84,7 @@
     }
     
     #prize {
-      font-size: 24px; font-weight: bold; color: var(--accent-color); 
+      font-size: 26px; font-weight: bold; color: var(--accent-color); 
       text-align: center; line-height: 150px;
       position: absolute; width: 100%; height: 100%;
       background: white; border-radius: 12px;
@@ -96,70 +103,70 @@
 
     /* 提示動畫 */
     #hint {
-      position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%);
-      text-align: center; font-size: 18px; color: #fff; font-weight: bold;
+      position: absolute; top: 75%; left: 0; width: 100%; transform: translateY(-50%);
+      text-align: center; font-size: 16px; color: #fff; font-weight: bold;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
       animation: pulse 1.2s infinite; pointer-events: none; z-index: 30;
     }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); } 50% { opacity: 0.6; transform: translateY(-50%) scale(1.1); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); } 50% { opacity: 0.8; transform: translateY(-50%) scale(1.05); } }
 
     /* 操作按鈕 */
     #actionArea { margin-top: 15px; min-height: 60px; position: relative; z-index: 50; }
-    #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: var(--success-color); padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); }
-    #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: var(--accent-color); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(198, 40, 40, 0.3); }
-    #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #607d8b; color: white; font-weight: bold; cursor: pointer; display: none; }
-    .error-msg { color: var(--accent-color); font-weight: bold; margin: 15px; }
+    #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: var(--success-color); padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); }
+    #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: var(--main-color); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3); }
+    #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #64748b; color: white; font-weight: bold; cursor: pointer; display: none; }
+    .error-msg { color: #dc2626; font-weight: bold; margin: 15px; }
 
     /* 個人紀錄 */
-    #personalHistory { width: 85%; max-width: 400px; margin-top: 30px; text-align: left; background: white; padding: 15px; border-radius: 15px; border: 1px solid #ddd; box-sizing: border-box; z-index: 5; }
-    #personalHistory h3 { margin: 0 0 10px 0; color: var(--main-dark); font-size: 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
-    .history-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    #personalHistory { width: 85%; max-width: 400px; margin-top: 30px; text-align: left; background: white; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; z-index: 5; }
+    #personalHistory h3 { margin: 0 0 10px 0; color: var(--main-dark); font-size: 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+    .history-item { padding: 12px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
     .history-item:last-child { border-bottom: none; }
-    .history-prize { font-weight: bold; color: #333; font-size: 16px; }
-    .history-time { font-size: 11px; color: #999; }
-    .history-link { background: var(--main-color); color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .history-prize { font-weight: bold; color: #1e293b; font-size: 16px; }
+    .history-time { font-size: 11px; color: #94a3b8; }
+    .history-link { background: var(--accent-color); color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
 
     /* 相機 */
     #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
     #videoPreview { width: 85%; max-width: 400px; border: 3px solid #FFF; border-radius: 15px; }
-    #closeCamBtn { margin-top: 30px; padding: 12px 40px; border-radius: 30px; border: 1px solid white; background: transparent; color: white; font-weight: bold; }
+    #closeCamBtn { margin-top: 30px; padding: 12px 40px; border-radius: 30px; border: 1px solid white; background: transparent; color: white; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <h2 id="mainTitle">🎉 幸運刮刮樂 ✨</h2>
+  <h2 id="mainTitle">🎓 畢業季專屬刮刮樂 🌻</h2>
   
   <div id="noticeBoard"></div>
 
   <div id="loadingContainer">
-    <div id="statusMessage" style="color:var(--main-dark); font-weight:bold; margin-bottom:8px;">🎲 正在查詢獎項...</div>
+    <div id="statusMessage" style="color:var(--main-dark); font-weight:bold; margin-bottom:8px;">🎓 正在為您揭曉畢業驚喜...</div>
     <div class="progress-box"><div id="progressBar" class="progress-bar"></div></div>
   </div>
 
   <div id="errorArea" class="error-msg"></div>
 
   <div id="inputSection">
-    <div style="margin-bottom:15px; font-weight:bold; color:var(--success-color);">🎁 點擊下方開啟相機抽獎：</div>
+    <div style="margin-bottom:15px; font-weight:bold; color:var(--main-color); font-size: 16px;">🎓 點擊下方開啟相機，領取畢業禮：</div>
     <button id="scanBtn" onclick="startCamera()">📷 開啟相機掃描</button>
   </div>
 
   <div class="wrapper" id="scratchWrapper">
     <div id="prize"></div>
     <canvas id="scratchCanvas" width="300" height="150"></canvas>
-    <div id="hint">👉 刮開金色圖層看結果！</div>
+    <div id="hint">👉 刮開圖層，迎向未來！</div>
   </div>
 
   <div id="actionArea">
     <a id="rewardLink" href="#" target="_blank"></a>
     <br>
     <button id="revealBtn">直接打開結果 ⚡</button>
-    <button id="nextBtn" onclick="resetForNext()">🔄 繼續掃描下一張</button>
+    <button id="nextBtn" onclick="resetForNext()">🔄 抽取下一份祝福</button>
   </div>
 
   <div id="personalHistory">
     <h3>
-      <span>🎁 我的獲獎紀錄</span>
-      <span style="font-size: 11px; color:#999; cursor:pointer;" onclick="clearHistory()">清除紀錄</span>
+      <span>🎓 我的畢業禮紀錄</span>
+      <span style="font-size: 11px; color:#94a3b8; cursor:pointer;" onclick="clearHistory()">清除紀錄</span>
     </h3>
     <div id="historyList"></div>
   </div>
@@ -176,8 +183,8 @@
     // 您原有的 Google Apps Script 網址 (無需更動)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
-    // 預設標題 (如果網址沒有指定，就會用這個)
-    const DEFAULT_TITLE = "幸運刮刮樂 ✨";
+    // 預設標題
+    const DEFAULT_TITLE = "🎓 畢業季專屬刮刮樂 🌻";
     
     // ========================================
 
@@ -337,7 +344,7 @@
         rewardLink.innerText = btnText;
 
         if (data.result === "played") {
-             errorArea.innerHTML = "<small style='color:#f57f17'>⚠️ 此項目已兌換過：</small>";
+             errorArea.innerHTML = "<small style='color:#ea580c'>⚠️ 此項目已兌換過：</small>";
              canvas.style.display = "none"; hint.style.display = "none"; revealBtn.style.display = "none"; 
              nextBtn.style.display = "inline-block";
              if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
@@ -388,7 +395,18 @@
         firstScratch = false; scratchCount = 0;
         canvas.style.display = "block"; canvas.style.opacity = "1"; canvas.style.pointerEvents = "auto"; 
         hint.style.display = "block";
-        ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = "#FFD700"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 畫上金色的底層
+        ctx.globalCompositeOperation = "source-over"; 
+        ctx.fillStyle = "var(--scratch-color)"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 在金漆上方寫入「畢業季」相關文字浮水印
+        ctx.fillStyle = "#b45309"; // 深橘/棕色字體
+        ctx.font = "bold 26px 微軟正黑體";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("🎓 畢業快樂 刮開驚喜", canvas.width / 2, canvas.height / 2 - 10);
     }
 
     function scratch(e) {
@@ -400,6 +418,7 @@
         if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
         const x = clientX - r.left; const y = clientY - r.top;
         
+        // 清除刮開的部分
         ctx.globalCompositeOperation = "destination-out"; 
         ctx.beginPath(); 
         ctx.arc(x, y, 15, 0, Math.PI * 2); 
