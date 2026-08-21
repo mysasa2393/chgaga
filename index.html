@@ -6,7 +6,9 @@
   <title>📚 開學季專屬刮刮樂</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v1 ----- */
+    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v2 -----
+       v2: 獎品文字顏色改為可由試算表「獎品」表 D 欄自訂 (prizeColor)，
+           未設定時 fallback 回 --accent-color */
     :root {
       --main-color: #16a34a;       /* 主色調：文具綠 */
       --main-dark: #14532d;        /* 深綠色 */
@@ -179,7 +181,7 @@
   </div>
 
   <script>
-    // ================= 設定區 (v1) =================
+    // ================= 設定區 (v2) =================
     // 您原有的 Google Apps Script 網址 (無需更動)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
@@ -337,6 +339,8 @@
         inputSection.style.display = "none";
         wrapper.style.display = "block";
         prizeDiv.innerText = data.prizeName;
+        // 顏色跟隨試算表「獎品」表 D 欄設定；沒填就用預設的 --accent-color
+        prizeDiv.style.color = data.prizeColor ? data.prizeColor : "";
         
         let btnText = "👉 點我前往領取";
         if (data.prizeName.includes("點數")) btnText = "👉 領取點數";
