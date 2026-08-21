@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🎓 畢業季專屬刮刮樂</title>
+  <title>📚 開學季專屬刮刮樂</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    /* ----- 畢業季視覺風格 (海軍藍 + 榮耀金) ----- */
+    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v1 ----- */
     :root {
-      --main-color: #1e3a8a;       /* 主色調：學院海軍藍 */
-      --main-dark: #172554;        /* 深藍色 */
-      --accent-color: #d97706;     /* 強調色：榮耀金/橘黃 */
+      --main-color: #16a34a;       /* 主色調：文具綠 */
+      --main-dark: #14532d;        /* 深綠色 */
+      --accent-color: #f97316;     /* 強調色：活力橘 */
       --success-color: #059669;    /* 成功綠 */
-      --bg-color: #f0f9ff;         /* 背景色：清新天空藍 */
+      --bg-color: #fefce8;         /* 背景色：筆記本米黃 */
       --scratch-color: #fbbf24;    /* 刮漆顏色：金色 */
     }
 
     body { 
       text-align: center; font-family: "微軟正黑體", sans-serif; 
-      /* 加入天空藍的漸層背景，增添青春感 */
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); 
+      /* 加入米黃到淺綠的漸層背景，增添開學新氣象 */
+      background: linear-gradient(135deg, #fefce8 0%, #ecfdf5 100%); 
       margin: 0; 
       overscroll-behavior-y: auto; 
       display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
@@ -39,7 +39,7 @@
     #noticeBoard {
       width: 85%; max-width: 400px; margin-bottom: 15px; padding: 12px 15px;
       background-color: #ffffff; border: 2px dashed var(--main-color); border-radius: 12px;
-      color: #1e40af; font-size: 14px; line-height: 1.6; display: none;
+      color: #15803d; font-size: 14px; line-height: 1.6; display: none;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
 
@@ -48,8 +48,8 @@
     .progress-box { width: 100%; height: 18px; background-color: #e0e0e0; border-radius: 10px; border: 2px solid var(--main-dark); overflow: hidden; }
     .progress-bar {
       width: 0%; height: 100%;
-      /* 藍色斜紋 */
-      background: repeating-linear-gradient(45deg, var(--main-color), var(--main-color) 10px, #3b82f6 10px, #3b82f6 20px);
+      /* 綠色斜紋 */
+      background: repeating-linear-gradient(45deg, var(--main-color), var(--main-color) 10px, #22c55e 10px, #22c55e 20px);
       transition: width 0.5s ease; animation: stripe-move 1s linear infinite;
     }
     @keyframes stripe-move { from { background-position: 0 0; } to { background-position: 28px 0; } }
@@ -58,7 +58,7 @@
     #inputSection { 
       padding: 30px 20px; background: white; width: 85%; max-width: 380px; 
       border-radius: 15px; border: 2px solid var(--main-color); 
-      box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15); 
+      box-shadow: 0 8px 25px rgba(22, 163, 74, 0.15); 
       display: none; box-sizing: border-box; 
     }
     #scanBtn { 
@@ -113,7 +113,7 @@
     /* 操作按鈕 */
     #actionArea { margin-top: 15px; min-height: 60px; position: relative; z-index: 50; }
     #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: var(--success-color); padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); }
-    #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: var(--main-color); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3); }
+    #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: var(--main-color); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); }
     #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #64748b; color: white; font-weight: bold; cursor: pointer; display: none; }
     .error-msg { color: #dc2626; font-weight: bold; margin: 15px; }
 
@@ -134,26 +134,26 @@
 </head>
 <body>
 
-  <h2 id="mainTitle">🎓 畢業季專屬刮刮樂 🌻</h2>
+  <h2 id="mainTitle">📚 開學季專屬刮刮樂 ✏️</h2>
   
   <div id="noticeBoard"></div>
 
   <div id="loadingContainer">
-    <div id="statusMessage" style="color:var(--main-dark); font-weight:bold; margin-bottom:8px;">🎓 正在為您揭曉畢業驚喜...</div>
+    <div id="statusMessage" style="color:var(--main-dark); font-weight:bold; margin-bottom:8px;">📚 正在為您揭曉開學驚喜...</div>
     <div class="progress-box"><div id="progressBar" class="progress-bar"></div></div>
   </div>
 
   <div id="errorArea" class="error-msg"></div>
 
   <div id="inputSection">
-    <div style="margin-bottom:15px; font-weight:bold; color:var(--main-color); font-size: 16px;">🎓 點擊下方開啟相機，領取畢業禮：</div>
+    <div style="margin-bottom:15px; font-weight:bold; color:var(--main-color); font-size: 16px;">📚 點擊下方開啟相機，領取開學禮：</div>
     <button id="scanBtn" onclick="startCamera()">📷 開啟相機掃描</button>
   </div>
 
   <div class="wrapper" id="scratchWrapper">
     <div id="prize"></div>
     <canvas id="scratchCanvas" width="300" height="150"></canvas>
-    <div id="hint">👉 刮開圖層，迎向未來！</div>
+    <div id="hint">👉 刮開圖層，開啟新學期！</div>
   </div>
 
   <div id="actionArea">
@@ -165,7 +165,7 @@
 
   <div id="personalHistory">
     <h3>
-      <span>🎓 我的畢業禮紀錄</span>
+      <span>📚 我的開學禮紀錄</span>
       <span style="font-size: 11px; color:#94a3b8; cursor:pointer;" onclick="clearHistory()">清除紀錄</span>
     </h3>
     <div id="historyList"></div>
@@ -179,12 +179,12 @@
   </div>
 
   <script>
-    // ================= 設定區 =================
+    // ================= 設定區 (v1) =================
     // 您原有的 Google Apps Script 網址 (無需更動)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
     // 預設標題
-    const DEFAULT_TITLE = "🎓 畢業季專屬刮刮樂 🌻";
+    const DEFAULT_TITLE = "📚 開學季專屬刮刮樂 ✏️";
     
     // ========================================
 
@@ -401,12 +401,12 @@
         ctx.fillStyle = "var(--scratch-color)"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // 在金漆上方寫入「畢業季」相關文字浮水印
-        ctx.fillStyle = "#b45309"; // 深橘/棕色字體
+        // 在金漆上方寫入「開學季」相關文字浮水印
+        ctx.fillStyle = "#9a3412"; // 深橘/棕色字體
         ctx.font = "bold 26px 微軟正黑體";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("🎓 畢業快樂 刮開驚喜", canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillText("📚 開學快樂 刮開驚喜", canvas.width / 2, canvas.height / 2 - 10);
     }
 
     function scratch(e) {
