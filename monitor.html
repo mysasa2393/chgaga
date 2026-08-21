@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎅 聖誕歡樂開獎看板 🎄</title>
+  <title>📚 開學季歡樂開獎看板 🎒</title>
   <style>
-    /* ----- 溫馨聖誕主題 ----- */
+    /* ----- 開學季主題 (文具綠 + 活力橘) v1 ----- */
     :root {
-      --bg-color: #FFF5EE; 
+      --bg-color: #fefce8; 
       --card-bg: #ffffff;
-      --primary-red: #d32f2f;
-      --primary-green: #2e7d32;
+      --primary-green: #16a34a;
+      --primary-orange: #f97316;
       --gold: #fbc02d;
-      --text-color: #5d4037; 
+      --text-color: #4b5563; 
     }
 
     body {
-      background: linear-gradient(180deg, #FFF5EE 0%, #ffebee 100%);
+      background: linear-gradient(180deg, #fefce8 0%, #ecfdf5 100%);
       color: var(--text-color);
       font-family: "微軟正黑體", "Segoe UI", sans-serif;
       margin: 0;
@@ -30,7 +30,7 @@
 
     /* 標題裝飾 */
     h1 {
-      color: var(--primary-red);
+      color: var(--primary-green);
       font-size: 3em;
       margin-bottom: 30px;
       text-shadow: 2px 2px 0px #fff, 4px 4px 10px rgba(0,0,0,0.1);
@@ -38,7 +38,7 @@
       z-index: 10;
     }
     h1::after {
-      content: "🎁"; font-size: 0.6em; position: absolute;
+      content: "🎒"; font-size: 0.6em; position: absolute;
       top: -10px; right: -50px; animation: swing 2s infinite ease-in-out;
     }
 
@@ -58,26 +58,26 @@
       background: var(--card-bg);
       border-radius: 20px;
       padding: 25px;
-      box-shadow: 0 10px 30px rgba(166, 124, 82, 0.15);
+      box-shadow: 0 10px 30px rgba(82, 130, 166, 0.15);
       border: 2px solid #fff;
       position: relative;
       overflow: hidden;
     }
     .card::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
-      background: repeating-linear-gradient(45deg, var(--primary-red), var(--primary-red) 10px, #fff 10px, #fff 20px);
+      background: repeating-linear-gradient(45deg, var(--primary-green), var(--primary-green) 10px, #fff 10px, #fff 20px);
     }
 
     /* 總數卡片 */
-    .stat-title { font-size: 20px; color: #8d6e63; margin-bottom: 5px; font-weight: bold; }
+    .stat-title { font-size: 20px; color: #6b7280; margin-bottom: 5px; font-weight: bold; }
     .stat-number {
-      font-size: 90px; font-weight: 900; color: var(--primary-green);
-      margin: 10px 0; text-shadow: 2px 2px 0px #e8f5e9; font-family: 'Arial Black', sans-serif;
+      font-size: 90px; font-weight: 900; color: var(--primary-orange);
+      margin: 10px 0; text-shadow: 2px 2px 0px #fff7ed; font-family: 'Arial Black', sans-serif;
     }
     
     .live-status {
       display: inline-flex; align-items: center;
-      background: #e8f5e9; color: var(--primary-green);
+      background: #ecfdf5; color: var(--primary-green);
       padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;
     }
     .live-dot {
@@ -90,17 +90,17 @@
       display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px;
     }
     .prize-mini-card {
-      background: #fff8e1; padding: 15px; border-radius: 12px; text-align: center;
-      border: 1px solid #ffe0b2;
+      background: #fff7ed; padding: 15px; border-radius: 12px; text-align: center;
+      border: 1px solid #fed7aa;
     }
-    .prize-name { font-size: 14px; color: #795548; margin-bottom: 5px; }
-    .prize-count { font-size: 24px; color: var(--primary-red); font-weight: bold; }
+    .prize-name { font-size: 14px; color: #9a3412; margin-bottom: 5px; }
+    .prize-count { font-size: 24px; color: var(--primary-green); font-weight: bold; }
 
     /* 右側列表 */
     .panel-header {
-      font-size: 22px; font-weight: bold; color: var(--primary-red);
+      font-size: 22px; font-weight: bold; color: var(--primary-green);
       margin-bottom: 15px; padding-bottom: 10px;
-      border-bottom: 2px dashed #ffcdd2;
+      border-bottom: 2px dashed #bbf7d0;
       display: flex; align-items: center; gap: 10px;
     }
     .log-list {
@@ -108,7 +108,7 @@
       overflow-y: auto; flex: 1; padding-right: 5px;
     }
     .log-list::-webkit-scrollbar { width: 6px; }
-    .log-list::-webkit-scrollbar-thumb { background: #ffccbc; border-radius: 3px; }
+    .log-list::-webkit-scrollbar-thumb { background: #bbf7d0; border-radius: 3px; }
 
     .log-item {
       display: flex; justify-content: space-between; align-items: center;
@@ -122,14 +122,14 @@
     .log-time { color: #999; font-size: 13px; font-family: monospace; }
     .log-user { color: #333; font-weight: bold; flex: 1; margin-left: 15px; font-size: 16px; }
     .log-prize { 
-      color: var(--primary-red); font-weight: bold; 
-      background: #ffebee; padding: 5px 10px; border-radius: 15px; font-size: 14px;
+      color: var(--primary-orange); font-weight: bold; 
+      background: #fff7ed; padding: 5px 10px; border-radius: 15px; font-size: 14px;
     }
 
-    /* 雪花特效 */
+    /* 飄落文具特效 (取代雪花) */
     .snowflake {
       position: fixed; top: -10px; z-index: 1;
-      color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.1);
+      text-shadow: 0 0 5px rgba(0,0,0,0.1);
       animation: fall linear infinite; pointer-events: none;
     }
 
@@ -147,13 +147,13 @@
 </head>
 <body>
 
-  <h1>🎅 聖誕歡樂開獎看板 🎄</h1>
+  <h1>📚 開學季歡樂開獎看板 🎒</h1>
 
   <div class="dashboard">
     
     <div class="left-panel">
       <div class="card" style="text-align: center;">
-        <div class="stat-title">📅 今日已送出禮物</div>
+        <div class="stat-title">📅 今日已送出獎品</div>
         <div class="stat-number" id="countDisplay">0</div>
         <div class="live-status">
           <span class="live-dot"></span> 即時連線中
@@ -161,7 +161,7 @@
       </div>
 
       <div class="card">
-        <div class="panel-header">📊 禮物派發狀況</div>
+        <div class="panel-header">📊 獎品派發狀況</div>
         <div class="breakdown-grid" id="breakdownGrid">
           <div style="color:#999; font-size:14px; grid-column:1/-1; text-align:center;">載入中...</div>
         </div>
@@ -171,7 +171,7 @@
     <div class="right-panel card">
       <div class="panel-header">📝 最新幸運兒名單</div>
       <ul class="log-list" id="logList">
-        <li style="text-align:center; padding:20px; color:#999;">等待聖誕老人派送中...</li>
+        <li style="text-align:center; padding:20px; color:#999;">等待新學期好運降臨中...</li>
       </ul>
     </div>
 
@@ -188,7 +188,7 @@
     // 儲存上一次的列表 HTML，用來比對是否需要更新
     let lastLogHtml = "";
 
-    createSnow();
+    createFloatingItems();
     fetchData();
     setInterval(fetchData, 5000);
 
@@ -219,7 +219,7 @@
 
     function updateBreakdown(counts) {
       if (!counts || Object.keys(counts).length === 0) {
-        breakdownGrid.innerHTML = '<div style="color:#aaa; font-size:14px; grid-column:1/-1; text-align:center;">今日尚無禮物送出</div>';
+        breakdownGrid.innerHTML = '<div style="color:#aaa; font-size:14px; grid-column:1/-1; text-align:center;">今日尚無獎品送出</div>';
         return;
       }
       const sortedPrizes = Object.entries(counts).sort((a, b) => b[1] - a[1]);
@@ -260,19 +260,20 @@
       }
     }
 
-    function createSnow() {
-      const symbols = ['❄', '❅', '❆', '•'];
+    function createFloatingItems() {
+      // 開學季飄落文具/書本符號 (取代原本的雪花)
+      const symbols = ['📚', '✏️', '📝', '🎒', '📐'];
       setInterval(() => {
-        const snowflake = document.createElement('div');
-        snowflake.classList.add('snowflake');
-        snowflake.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-        snowflake.style.left = Math.random() * 100 + 'vw';
-        snowflake.style.animationDuration = Math.random() * 3 + 5 + 's'; 
-        snowflake.style.opacity = Math.random();
-        snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
-        document.body.appendChild(snowflake);
-        setTimeout(() => { snowflake.remove(); }, 10000);
-      }, 300);
+        const item = document.createElement('div');
+        item.classList.add('snowflake');
+        item.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        item.style.left = Math.random() * 100 + 'vw';
+        item.style.animationDuration = Math.random() * 3 + 5 + 's'; 
+        item.style.opacity = Math.random() * 0.6 + 0.4;
+        item.style.fontSize = Math.random() * 10 + 14 + 'px';
+        document.body.appendChild(item);
+        setTimeout(() => { item.remove(); }, 10000);
+      }, 400);
     }
   </script>
 
