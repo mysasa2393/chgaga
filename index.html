@@ -6,9 +6,11 @@
   <title>📚 開學季專屬刮刮樂</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v2 -----
+    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v3 -----
        v2: 獎品文字顏色改為可由試算表「獎品」表 D 欄自訂 (prizeColor)，
-           未設定時 fallback 回 --accent-color */
+           未設定時 fallback 回 --accent-color
+       v3: 領獎內容如果是「一整段含說明文字的禮券內容」(非單純網址)，
+           改為直接印出文字、網址自動轉超連結，不再只顯示單一按鈕 */
     :root {
       --main-color: #16a34a;       /* 主色調：文具綠 */
       --main-dark: #14532d;        /* 深綠色 */
@@ -114,6 +116,13 @@
 
     /* 操作按鈕 */
     #actionArea { margin-top: 15px; min-height: 60px; position: relative; z-index: 50; }
+    #rewardText {
+      display: none; text-align: left; margin: 10px auto; padding: 16px 18px;
+      max-width: 320px; background: #fff7ed; border: 2px dashed var(--accent-color);
+      border-radius: 12px; font-size: 14px; line-height: 1.7; color: #7c2d12;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    #rewardText a { color: var(--main-color); font-weight: bold; word-break: break-all; }
     #rewardLink { display: none; margin: 10px auto; font-size: 16px; color: white; background-color: var(--success-color); padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3); }
     #nextBtn { display: none; margin: 10px auto; padding: 12px 30px; font-size: 17px; background: var(--main-color); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); }
     #revealBtn { margin: 10px auto; padding: 10px 20px; font-size: 15px; border: none; border-radius: 8px; background: #64748b; color: white; font-weight: bold; cursor: pointer; display: none; }
@@ -159,6 +168,7 @@
   </div>
 
   <div id="actionArea">
+    <div id="rewardText"></div>
     <a id="rewardLink" href="#" target="_blank"></a>
     <br>
     <button id="revealBtn">直接打開結果 ⚡</button>
@@ -181,7 +191,7 @@
   </div>
 
   <script>
-    // ================= 設定區 (v2) =================
+    // ================= 設定區 (v3) =================
     // 您原有的 Google Apps Script 網址 (無需更動)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
@@ -194,6 +204,7 @@
     const ctx = canvas.getContext("2d");
     const prizeDiv = document.getElementById("prize");
     const rewardLink = document.getElementById("rewardLink");
+    const rewardText = document.getElementById("rewardText");
     const revealBtn = document.getElementById("revealBtn");
     const nextBtn = document.getElementById("nextBtn");
     const hint = document.getElementById("hint");
@@ -246,21 +257,30 @@
         renderHistory();
     }
 
+    function extractUrl(str) {
+        if (!str) return "";
+        const match = String(str).match(/(https?:\/\/[^\s]+)/);
+        return match ? match[1] : "";
+    }
+
     function renderHistory() {
         const history = JSON.parse(localStorage.getItem('my_lottery_prizes') || '[]');
         if (history.length === 0) {
             historyList.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">尚無紀錄</div>';
             return;
         }
-        historyList.innerHTML = history.map(item => `
+        historyList.innerHTML = history.map(item => {
+            const link = extractUrl(item.url);
+            return `
             <div class="history-item">
                 <div style="flex:1;">
                     <div class="history-prize">${item.name}</div>
                     <div class="history-time">${item.time}</div>
                 </div>
-                ${item.url ? `<a href="${item.url}" target="_blank" class="history-link">兌換</a>` : ''}
+                ${link ? `<a href="${link}" target="_blank" class="history-link">兌換</a>` : ''}
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function clearHistory() { if(confirm("確定要清除您的紀錄嗎？")) { localStorage.removeItem('my_lottery_prizes'); renderHistory(); } }
@@ -335,6 +355,28 @@
             .catch(() => { stopLoading(); errorArea.innerText = "連線失敗"; inputSection.style.display = "block"; });
     }
 
+    // 判斷 prizeUrl 是「單純網址」還是「含說明文字的完整禮券內容」，
+    // 是純網址就顯示原本的綠色按鈕；是一整段文字(含網址)就直接把文字印出來，
+    // 網址部分自動轉成可點擊連結 (解決「禮券序號/兌換說明要直接顯示文字」的需求)。
+    function isBareUrl(str) {
+        return /^https?:\/\/\S+$/.test(str.trim());
+    }
+    function linkify(text) {
+        return text.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+    }
+    function renderReward(url) {
+        rewardLink.style.display = "none";
+        rewardText.style.display = "none";
+        if (!url) return;
+        if (isBareUrl(url)) {
+            rewardLink.href = url;
+            rewardLink.style.display = "inline-block";
+        } else {
+            rewardText.innerHTML = linkify(url);
+            rewardText.style.display = "block";
+        }
+    }
+
     function setupScratchCard(data) {
         inputSection.style.display = "none";
         wrapper.style.display = "block";
@@ -351,7 +393,7 @@
              errorArea.innerHTML = "<small style='color:#ea580c'>⚠️ 此項目已兌換過：</small>";
              canvas.style.display = "none"; hint.style.display = "none"; revealBtn.style.display = "none"; 
              nextBtn.style.display = "inline-block";
-             if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
+             renderReward(prizeUrlData);
         } else {
              revealBtn.style.display = "inline-block";
              resetCanvas(); 
@@ -368,12 +410,12 @@
             canvas.style.display = "none"; 
             revealBtn.style.display = "none";
             nextBtn.style.display = "inline-block";
-            if (prizeUrlData) { rewardLink.href = prizeUrlData; rewardLink.style.display = "inline-block"; }
+            renderReward(prizeUrlData);
         }, 300);
     }
 
     function resetForNext() {
-        wrapper.style.display = "none"; rewardLink.style.display = "none"; 
+        wrapper.style.display = "none"; rewardLink.style.display = "none"; rewardText.style.display = "none";
         nextBtn.style.display = "none"; revealBtn.style.display = "none"; errorArea.innerText = "";
         canvas.style.pointerEvents = "auto";
         canvas.style.opacity = "1";
