@@ -6,11 +6,13 @@
   <title>📚 開學季專屬刮刮樂</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
-    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v3 -----
+    /* ----- 開學季視覺風格 (文具綠 + 活力橘) v4 -----
        v2: 獎品文字顏色改為可由試算表「獎品」表 D 欄自訂 (prizeColor)，
            未設定時 fallback 回 --accent-color
        v3: 領獎內容如果是「一整段含說明文字的禮券內容」(非單純網址)，
-           改為直接印出文字、網址自動轉超連結，不再只顯示單一按鈕 */
+           改為直接印出文字、網址自動轉超連結，不再只顯示單一按鈕
+       v4: 個人紀錄清單裡，同一段禮券說明文字改成可展開「查看內容」，
+           而不是只給一顆直接開連結的「兌換」按鈕 */
     :root {
       --main-color: #16a34a;       /* 主色調：文具綠 */
       --main-dark: #14532d;        /* 深綠色 */
@@ -136,6 +138,14 @@
     .history-prize { font-weight: bold; color: #1e293b; font-size: 16px; }
     .history-time { font-size: 11px; color: #94a3b8; }
     .history-link { background: var(--accent-color); color: white; text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    button.history-link { border: none; cursor: pointer; font-family: inherit; }
+    .history-detail {
+      margin-top: 8px; padding: 10px 12px; background: #fff7ed;
+      border: 1px dashed var(--accent-color); border-radius: 8px;
+      font-size: 13px; line-height: 1.6; color: #7c2d12;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .history-detail a { color: var(--main-color); font-weight: bold; word-break: break-all; }
 
     /* 相機 */
     #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
@@ -191,7 +201,7 @@
   </div>
 
   <script>
-    // ================= 設定區 (v3) =================
+    // ================= 設定區 (v4) =================
     // 您原有的 Google Apps Script 網址 (無需更動)
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxHEwjdt1URWlRsDpuZFn-Mgqi62l_vSjtAa9up21d37UblgtnNPQgmW3SkDZTe_S2jtw/exec";
     
@@ -269,18 +279,29 @@
             historyList.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">尚無紀錄</div>';
             return;
         }
-        historyList.innerHTML = history.map(item => {
-            const link = extractUrl(item.url);
+        historyList.innerHTML = history.map((item, idx) => {
+            const raw = item.url || "";
+            const isRich = raw && !isBareUrl(raw);
+            const link = extractUrl(raw);
+            const actionHtml = isRich
+                ? `<button class="history-link" onclick="toggleHistoryDetail(${idx})">查看內容</button>`
+                : (link ? `<a href="${link}" target="_blank" class="history-link">兌換</a>` : '');
             return `
             <div class="history-item">
                 <div style="flex:1;">
                     <div class="history-prize">${item.name}</div>
                     <div class="history-time">${item.time}</div>
+                    ${isRich ? `<div class="history-detail" id="historyDetail${idx}" style="display:none;">${linkify(raw)}</div>` : ''}
                 </div>
-                ${link ? `<a href="${link}" target="_blank" class="history-link">兌換</a>` : ''}
+                ${actionHtml}
             </div>
         `;
         }).join('');
+    }
+
+    function toggleHistoryDetail(idx) {
+        const el = document.getElementById(`historyDetail${idx}`);
+        if (el) el.style.display = (el.style.display === "none") ? "block" : "none";
     }
 
     function clearHistory() { if(confirm("確定要清除您的紀錄嗎？")) { localStorage.removeItem('my_lottery_prizes'); renderHistory(); } }
